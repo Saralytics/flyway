@@ -1,0 +1,29 @@
+version: '3'
+services:
+  flyway:
+    image: flyway/flyway
+    command: -configFiles=/flyway/conf/flyway.config -locations=filesystem:/flyway/sql -connectRetries=60 migrate
+    volumes:
+      - ${PWD}/migrations:/flyway/sql
+      - ${PWD}/flyway.config:/flyway/conf/flyway.config
+    depends_on:
+      - db
+  db:
+    image: postgres
+    container_name: mydb
+    environment:
+      POSTGRES_DB: artemis
+      POSTGRES_USER: artemis
+      POSTGRES_PASSWORD: artemis
+    expose:
+      - 5432
+    
+    networks:
+      default:
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U artemis" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 360s
