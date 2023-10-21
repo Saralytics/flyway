@@ -1,0 +1,1 @@
+Flyway cli + initial empty database + a initial setup script
